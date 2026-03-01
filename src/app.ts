@@ -24,6 +24,6 @@ export const app = new Elysia()
   .mount("/auth", auth.handler)
 
   // Health Check
-  .get("/", () => healthCheck())
+  .get("/health-check", () => healthCheck())
 
 export type App = typeof app

@@ -27,3 +27,5 @@ bunx drizzle-kit up
 ```
 
 Open http://localhost:3000/ with your browser to see the result.
+Open http://localhost:3000/openapi with your browser to see the OpenAPI documentation.
+Open http://localhost:3000/health-check with your browser to see the health check (e.g database connection).
