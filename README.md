@@ -48,7 +48,7 @@ bun run start
 ### Endpoints
 - **API Base:** `http://localhost:3000/`
 - **OpenAPI / Swagger UI:** `http://localhost:3000/openapi`
-- **Health Check:** `http://localhost:3000/health-check`
+- **Health Check:** `http://localhost:3000/health-check` to check connections (e.g. database, smtp)
 
 ## Database Migrations (Drizzle ORM)
 
