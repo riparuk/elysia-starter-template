@@ -29,7 +29,7 @@ export const app = new Elysia()
   // Response middleware
   // .use(ResponseMiddleware)
 
-  .mount("/auth", auth.handler)
+  .mount(auth.handler)
 
   // Health Check
   .get("/health-check", () => healthCheck())
@@ -38,6 +38,8 @@ export const app = new Elysia()
   })
 
   // Modules
-  .use(productHandler)
+  .group("/api", (app) => app
+    .use(productHandler)
+  )
 
 export type App = typeof app
