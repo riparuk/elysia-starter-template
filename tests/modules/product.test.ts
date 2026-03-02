@@ -1,30 +1,22 @@
-import { describe, expect, it, beforeAll } from "bun:test";
+import { describe, expect, it } from "bun:test";
 import { treaty } from "@elysiajs/eden";
 import { app } from "../../src/app";
 
 // Wrap the app with Treaty client
 const tClient = treaty(app);
 
+// Helper function to create an authenticated user and return the cookie
+async function getAuthCookie() {
+    const testEmail = `test_product_${Date.now()}_${Math.random().toString(36).substring(7)}@example.com`;
+    const res = await (tClient as any).auth.api["sign-up"].email.post({
+        email: testEmail,
+        password: "password123",
+        name: "Test User"
+    });
+    return res.response?.headers.get("set-cookie") || "";
+}
 
 describe("Product Module Tests", () => {
-    let authCookie = "";
-    let createdProductId = "";
-
-    beforeAll(async () => {
-        // Create a test user to get an authenticated session cookie
-        const testEmail = `test_product_${Date.now()}@example.com`;
-        const res = await (tClient as any).auth.api["sign-up"].email.post({
-            email: testEmail,
-            password: "password123",
-            name: "Test User"
-        });
-
-        const cookieHeader = res.response?.headers.get("set-cookie");
-        if (cookieHeader) {
-            authCookie = cookieHeader;
-        }
-    });
-
     describe("GET /products", () => {
         it("should return a list of products successfully", async () => {
             const { status, error } = await tClient.api.products.get();
@@ -45,6 +37,7 @@ describe("Product Module Tests", () => {
         });
 
         it("should create a new product when authenticated", async () => {
+            const authCookie = await getAuthCookie();
             const { status, data, error } = await tClient.api.products.post({
                 name: "New Product",
                 price: 1500,
@@ -60,27 +53,49 @@ describe("Product Module Tests", () => {
             expect(error).toBeNull();
             expect(data?.data).toHaveProperty("id");
             expect(data?.data.name).toBe("New Product");
-
-            if (data?.data.id) {
-                createdProductId = data.data.id;
-            }
         });
     });
 
     describe("GET /products/:id", () => {
         it("should return the newly created product", async () => {
-            const { status, data } = await tClient.api.products({ id: createdProductId }).get();
+            const authCookie = await getAuthCookie();
+
+            // 1. SETUP: Create a product first
+            const createRes = await tClient.api.products.post({
+                name: "Test Get ID",
+                price: 1500,
+                description: "Test standalone isolation"
+            }, {
+                fetch: { headers: { cookie: authCookie } }
+            });
+            const standaloneTestId = createRes.data?.data.id;
+            expect(standaloneTestId).toBeDefined();
+
+            // 2. ACTION: Get the product
+            const { status, data } = await tClient.api.products({ id: standaloneTestId! }).get();
             expect(status).toBe(200);
-            expect(data?.data.id).toBe(createdProductId);
+            expect(data?.data.id).toBe(standaloneTestId);
         });
     });
 
     describe("DELETE /products/:id", () => {
         it("should delete the product when authenticated", async () => {
-            const { status, error } = await tClient.api.products({ id: createdProductId }).delete(undefined, {
-                fetch: {
-                    headers: { cookie: authCookie }
-                }
+            const authCookie = await getAuthCookie();
+
+            // 1. SETUP: Create a product
+            const createRes = await tClient.api.products.post({
+                name: "Test Delete ID",
+                price: 1500,
+                description: "Test delete isolation"
+            }, {
+                fetch: { headers: { cookie: authCookie } }
+            });
+            const standaloneTestId = createRes.data?.data.id;
+            expect(standaloneTestId).toBeDefined();
+
+            // 2. ACTION: Delete the product
+            const { status, error } = await tClient.api.products({ id: standaloneTestId! }).delete(undefined, {
+                fetch: { headers: { cookie: authCookie } }
             });
 
             expect(status).toBe(200);
@@ -88,7 +103,26 @@ describe("Product Module Tests", () => {
         });
 
         it("should return 404 when getting the deleted product", async () => {
-            const { status } = await tClient.api.products({ id: createdProductId }).get();
+            const authCookie = await getAuthCookie();
+
+            // 1. SETUP: Create a product
+            const createRes = await tClient.api.products.post({
+                name: "Test Get Deleted",
+                price: 1500,
+                description: "Test 404 isolation"
+            }, {
+                fetch: { headers: { cookie: authCookie } }
+            });
+            const standaloneTestId = createRes.data?.data.id;
+            expect(standaloneTestId).toBeDefined();
+
+            // 2. SETUP: Delete the product
+            await tClient.api.products({ id: standaloneTestId! }).delete(undefined, {
+                fetch: { headers: { cookie: authCookie } }
+            });
+
+            // 3. ACTION: Get the deleted product
+            const { status } = await tClient.api.products({ id: standaloneTestId! }).get();
             expect(status).toBe(404);
         });
     });

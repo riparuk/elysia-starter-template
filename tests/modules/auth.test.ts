@@ -6,7 +6,6 @@ import { app } from "../../src/app";
 const tClient = treaty(app);
 
 describe("Auth Module Tests (via better-auth)", () => {
-    let authCookie = "";
 
     describe("POST /auth/api/sign-in/email", () => {
         it("should reject invalid login credentials", async () => {
@@ -29,6 +28,8 @@ describe("Auth Module Tests (via better-auth)", () => {
 
     describe("POST /auth/api/sign-in/email", () => {
         it("should sign up and sign in a user", async () => {
+            let authCookie = "";
+
             const testEmail = `test_${Date.now()}@example.com`;
             const testPassword = "password123";
             const SignUpResponse = await (tClient as any).auth.api["sign-up"].email.post({
