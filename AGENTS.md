@@ -1,6 +1,6 @@
 ## Technical Rules
 - Always use 'AppError' class for error handling (src/core/error.ts).
-- Explicit dto must be defined in model.ts file.
+- Explicit dto must be defined in model.ts file, make sure its the same between handler and service.
 
 ## Name convention
 - File name must be in kebab-case.
