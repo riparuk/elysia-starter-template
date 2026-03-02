@@ -13,13 +13,11 @@ describe("Product Module Tests", () => {
     beforeAll(async () => {
         // Create a test user to get an authenticated session cookie
         const testEmail = `test_product_${Date.now()}@example.com`;
-        const res = await tClient.auth.api["sign-up"].email.post({
+        const res = await (tClient as any).auth.api["sign-up"].email.post({
             email: testEmail,
             password: "password123",
             name: "Test User"
         });
-
-        console.log("res", res);
 
         const cookieHeader = res.response?.headers.get("set-cookie");
         if (cookieHeader) {
