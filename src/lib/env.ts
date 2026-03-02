@@ -11,7 +11,15 @@ const envSchema = z.object({
 
     BETTER_AUTH_URL: z.string().url(),
 
-    CORS_ORIGIN: z.string().optional().transform(val => val ? val.split(',').map(u => u.trim()) : [])
+    CORS_ORIGIN: z.string().optional().transform(val => val ? val.split(',').map(u => u.trim()) : []),
+
+    // SMTP Configuration
+    SMTP_HOST: z.string().optional(),
+    SMTP_PORT: z.coerce.number().optional(),
+    SMTP_USER: z.string().optional(),
+    SMTP_PASS: z.string().optional(),
+    SMTP_SECURE: z.coerce.boolean().optional().default(false),
+    SMTP_FROM: z.string().optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
