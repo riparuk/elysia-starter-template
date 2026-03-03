@@ -51,6 +51,8 @@ bun run format
 bun run lint:fix
 ```
 
+> **Note:** This project uses [Husky](https://typicode.github.io/husky/) and [lint-staged](https://github.com/lint-staged/lint-staged). Every time you run `git commit`, it will automatically format and lint the files you have staged. If there are any ESLint errors that cannot be fixed automatically, the commit will be aborted.
+
 ### Endpoints
 - **API Base:** `http://localhost:3000/`
 - **OpenAPI / Swagger UI:** `http://localhost:3000/openapi`

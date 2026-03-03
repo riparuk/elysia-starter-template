@@ -8,7 +8,14 @@
     "start": "./.output/server",
     "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" --fix",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
@@ -31,6 +38,8 @@
     "drizzle-kit": "^0.31.9",
     "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.1",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",
     "typescript-eslint": "^8.56.1"
