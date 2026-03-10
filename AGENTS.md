@@ -61,7 +61,7 @@ tests/
 - **DTOs:** Define all request/response shapes in the module's `model.ts`. Use the same DTO types consistently across `handler.ts` and `service.ts`.
 - **No magic strings:** Use enums or constants for status codes and error types.
 - **Don't use 'any' type:** Use proper types instead of 'any' as much as possible
-- **Always make tests for new features:** For every new feature, create a new test file in the `tests/modules/` directory.
+- **Always make tests for new features:** For every new feature or changes, create a new test or update existing test file in the `tests/modules/` directory.
 - **Don't edit product-example module:** The product-example module is a template and should not be edited. Use it as a reference to create new modules.
 
 ---
