@@ -18,7 +18,7 @@ This project enforces a strict, modular directory structure to cleanly separate 
 
 - `src/core/`: Contains core foundation components that are agnostic to business logic (e.g., custom errors, global middlewares, standard response formats).
 - `src/lib/`: Custom wrappers and configurations for external libraries or third-party services (e.g., database connection, Redis, email provider, auth utilities).
-- `src/modules/`: Contains the actual business logic grouped by features or domains (e.g., `auth`, `product`). Each module encapsulates its own routes (`handler.ts`), database schema (`schema.ts`), data transfer objects (`model.ts`), and business logic (`service.ts`).
+- `src/modules/`: Contains the actual business logic grouped by features or domains (e.g., `auth`, `product-example`). Each module encapsulates its own routes (`handler.ts`), database schema (`schema.ts`), data transfer objects (`model.ts`), and business logic (`service.ts`).
 - `src/utils/`: General-purpose helper functions and utilities used across the application.
 - `drizzle/`: Contains the database migration files and the central schema definitions (`schemas.ts`).
 - `tests/`: Contains automated tests for the project.

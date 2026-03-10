@@ -1,7 +1,7 @@
 import { Elysia, t } from 'elysia'
 
-import { ProductService } from './service'
-import { ProductModel } from './model'
+import { ProductExampleService } from './service'
+import { ProductExampleModel } from './model'
 import {
 	formatResponse,
 	FormatResponseSchema
@@ -9,19 +9,19 @@ import {
 import { buildPaginationMeta } from '../../core/pagination'
 import { authMiddleware } from '../../middleware/auth-middleware'
 
-export const productHandler = new Elysia({
-	prefix: '/products',
-	tags: ['Product']
+export const productExampleHandler = new Elysia({
+	prefix: '/product-examples',
+	tags: ['Product Example']
 })
 	// Auth middleware
 	.use(authMiddleware)
 
-	// GET /products — list with pagination
+	// GET /product-examples — list with pagination
 	.get(
 		'/',
 		async ({ query, path }) => {
 			const { data, totalItems, pagination } =
-				await ProductService.getAll(query)
+				await ProductExampleService.getAll(query)
 			return formatResponse({
 				path,
 				data,
@@ -30,32 +30,34 @@ export const productHandler = new Elysia({
 		},
 		{
 			requireAdmin: true, // need admin role
-			query: ProductModel.ProductQuery,
+			query: ProductExampleModel.ProductExampleQuery,
 			response: FormatResponseSchema(
-				t.Array(ProductModel.ProductWithUserResponse)
+				t.Array(ProductExampleModel.ProductExampleWithUserResponse)
 			)
 		}
 	)
 
-	// GET /products/:id — single product
+	// GET /product-examples/:id — single product
 	.get(
 		'/:id',
 		async ({ params: { id }, path }) => {
-			const data = await ProductService.getById(id)
+			const data = await ProductExampleService.getById(id)
 			return formatResponse({ path, data })
 		},
 		{
 			params: t.Object({ id: t.String() }),
-			response: FormatResponseSchema(ProductModel.ProductWithUserResponse)
+			response: FormatResponseSchema(
+				ProductExampleModel.ProductExampleWithUserResponse
+			)
 		}
 	)
 
-	// GET /products/my-products — list with pagination
+	// GET /product-examples/my-product-examples — list with pagination
 	.get(
-		'/my-products',
+		'/my-product-examples',
 		async ({ query, path, user }) => {
 			const { data, totalItems, pagination } =
-				await ProductService.getAllMyProducts(query, user?.id)
+				await ProductExampleService.getAllMyProducts(query, user?.id)
 			return formatResponse({
 				path,
 				data,
@@ -64,18 +66,18 @@ export const productHandler = new Elysia({
 		},
 		{
 			requireAuth: true, // need auth role
-			query: ProductModel.ProductQuery,
+			query: ProductExampleModel.ProductExampleQuery,
 			response: FormatResponseSchema(
-				t.Array(ProductModel.ProductResponse)
+				t.Array(ProductExampleModel.ProductExampleResponse)
 			)
 		}
 	)
 
-	// POST /products — create
+	// POST /product-examples — create
 	.post(
 		'/',
 		async ({ body, path, user }) => {
-			const data = await ProductService.create(body, user?.id)
+			const data = await ProductExampleService.create(body, user?.id)
 			return formatResponse({
 				path,
 				data,
@@ -85,36 +87,42 @@ export const productHandler = new Elysia({
 		},
 		{
 			requireAuth: true, // need auth role
-			body: ProductModel.ProductInputCreate,
-			response: FormatResponseSchema(ProductModel.ProductResponse)
+			body: ProductExampleModel.ProductExampleInputCreate,
+			response: FormatResponseSchema(
+				ProductExampleModel.ProductExampleResponse
+			)
 		}
 	)
 
-	// PATCH /products/:id — update
+	// PATCH /product-examples/:id — update
 	.patch(
 		'/:id',
 		async ({ params: { id }, body, path, user }) => {
-			const data = await ProductService.update(id, body, user?.id)
+			const data = await ProductExampleService.update(id, body, user?.id)
 			return formatResponse({ path, data, message: 'Product updated' })
 		},
 		{
 			requireAuth: true, // need auth role
 			params: t.Object({ id: t.String() }),
-			body: ProductModel.ProductInputUpdate,
-			response: FormatResponseSchema(ProductModel.ProductResponse)
+			body: ProductExampleModel.ProductExampleInputUpdate,
+			response: FormatResponseSchema(
+				ProductExampleModel.ProductExampleResponse
+			)
 		}
 	)
 
-	// DELETE /products/:id — delete
+	// DELETE /product-examples/:id — delete
 	.delete(
 		'/:id',
 		async ({ params: { id }, path, user }) => {
-			const data = await ProductService.delete(id, user?.id)
+			const data = await ProductExampleService.delete(id, user?.id)
 			return formatResponse({ path, data, message: 'Product deleted' })
 		},
 		{
 			requireAuth: true, // need auth role
 			params: t.Object({ id: t.String() }),
-			response: FormatResponseSchema(ProductModel.ProductResponse)
+			response: FormatResponseSchema(
+				ProductExampleModel.ProductExampleResponse
+			)
 		}
 	)

@@ -9,8 +9,8 @@ src/
 ├── core/             # Framework-agnostic foundations (errors, response formats, interfaces)
 ├── lib/              # Wrappers for external services (database, auth, env)
 ├── middleware/       # Elysia middleware plugins
-├── modules/          # Feature modules grouped by domain (e.g., product, auth)
-│   └── product/
+├── modules/          # Feature modules grouped by domain (e.g., product-example, auth)
+│   └── product-example/
 │       ├── handler.ts   # Route definitions (Elysia group)
 │       ├── model.ts     # DTOs / request-response types
 │       ├── schema.ts    # Drizzle table schema
@@ -27,7 +27,7 @@ tests/
 └── modules/          # Integration tests per module
 ```
 
-- Use `src/modules/product/` as the canonical example for any new module.
+- Use `src/modules/product-example/` as the canonical example for any new module.
 - Register new module schemas in `drizzle/schemas.ts`.
 
 ---
@@ -62,7 +62,7 @@ tests/
 - **No magic strings:** Use enums or constants for status codes and error types.
 - **Don't use 'any' type:** Use proper types instead of 'any' as much as possible
 - **Always make tests for new features:** For every new feature, create a new test file in the `tests/modules/` directory.
-- **Don't edit product module:** The product module is a template and should not be edited. Use it as a reference to create new modules.
+- **Don't edit product-example module:** The product-example module is a template and should not be edited. Use it as a reference to create new modules.
 
 ---
 
@@ -116,7 +116,7 @@ describe("My Module Tests", () => {
 });
 ```
 
-- See `tests/modules/product.test.ts` for a full example with create, read, and delete flows.
+- See `tests/modules/product-example.test.ts` for a full example with create, read, and delete flows.
 - See `tests/modules/auth.test.ts` for auth-specific test patterns.
 - Test file names mirror module names: `tests/modules/<module-name>.test.ts`.
 

@@ -4,18 +4,18 @@ import { nanoid } from 'nanoid'
 
 import { db } from '../../lib/database'
 import { PaginatedResult, normalizePagination } from '../../core/pagination'
-import { product } from './schema'
-import { ProductModel } from './model'
+import { productExample } from './schema'
+import { ProductExampleModel } from './model'
 import { AppError } from '../../core/error'
 
 // Abstract class as it carries no instance state
-export abstract class ProductService {
+export abstract class ProductExampleService {
 	private static async checkProductOwnership(
 		productId: string,
 		userId: string
 	): Promise<void> {
-		const row = await db.query.product.findFirst({
-			where: eq(product.id, productId)
+		const row = await db.query.productExample.findFirst({
+			where: eq(productExample.id, productId)
 		})
 
 		if (!row) {
@@ -31,24 +31,28 @@ export abstract class ProductService {
 	}
 
 	static async getAll(
-		query?: ProductModel.ProductQuery
-	): Promise<PaginatedResult<ProductModel.ProductWithUserResponse>> {
+		query?: ProductExampleModel.ProductExampleQuery
+	): Promise<
+		PaginatedResult<ProductExampleModel.ProductExampleWithUserResponse>
+	> {
 		const pagination = normalizePagination(query)
 
-		const where = query?.q ? ilike(product.name, `%${query.q}%`) : undefined
+		const where = query?.q
+			? ilike(productExample.name, `%${query.q}%`)
+			: undefined
 
 		const [data, countResult] = await Promise.all([
-			db.query.product.findMany({
+			db.query.productExample.findMany({
 				where: where,
 				limit: pagination.take,
 				offset: pagination.skip,
-				orderBy: product.createdAt,
+				orderBy: productExample.createdAt,
 				// With Include
 				with: {
 					user: true
 				}
 			}),
-			db.select({ count: count() }).from(product).where(where)
+			db.select({ count: count() }).from(productExample).where(where)
 		])
 
 		return { data, totalItems: countResult[0]?.count ?? 0, pagination }
@@ -56,9 +60,9 @@ export abstract class ProductService {
 
 	static async getById(
 		id: string
-	): Promise<ProductModel.ProductWithUserResponse> {
-		const row = await db.query.product.findFirst({
-			where: eq(product.id, id),
+	): Promise<ProductExampleModel.ProductExampleWithUserResponse> {
+		const row = await db.query.productExample.findFirst({
+			where: eq(productExample.id, id),
 			// With Include
 			with: {
 				user: true
@@ -73,35 +77,35 @@ export abstract class ProductService {
 	}
 
 	static async getAllMyProducts(
-		query?: ProductModel.ProductQuery,
+		query?: ProductExampleModel.ProductExampleQuery,
 		userId?: string
-	): Promise<PaginatedResult<ProductModel.ProductResponse>> {
+	): Promise<PaginatedResult<ProductExampleModel.ProductExampleResponse>> {
 		const pagination = normalizePagination(query)
 
 		const where = and(
-			userId ? eq(product.userId, userId) : undefined,
-			query?.q ? ilike(product.name, `%${query.q}%`) : undefined
+			userId ? eq(productExample.userId, userId) : undefined,
+			query?.q ? ilike(productExample.name, `%${query.q}%`) : undefined
 		)
 
 		const [data, countResult] = await Promise.all([
-			db.query.product.findMany({
+			db.query.productExample.findMany({
 				where: where,
 				limit: pagination.take,
 				offset: pagination.skip,
-				orderBy: product.createdAt
+				orderBy: productExample.createdAt
 			}),
-			db.select({ count: count() }).from(product).where(where)
+			db.select({ count: count() }).from(productExample).where(where)
 		])
 
 		return { data, totalItems: countResult[0]?.count ?? 0, pagination }
 	}
 
 	static async create(
-		data: ProductModel.ProductInputCreate,
+		data: ProductExampleModel.ProductExampleInputCreate,
 		userId: string
-	): Promise<ProductModel.ProductResponse> {
+	): Promise<ProductExampleModel.ProductExampleResponse> {
 		const [row] = await db
-			.insert(product)
+			.insert(productExample)
 			.values({
 				id: nanoid(),
 				userId,
@@ -117,14 +121,14 @@ export abstract class ProductService {
 
 	static async update(
 		id: string,
-		data: ProductModel.ProductInputUpdate,
+		data: ProductExampleModel.ProductExampleInputUpdate,
 		userId: string
-	): Promise<ProductModel.ProductResponse> {
+	): Promise<ProductExampleModel.ProductExampleResponse> {
 		// Check product ownership
 		await this.checkProductOwnership(id, userId)
 
 		const [row] = await db
-			.update(product)
+			.update(productExample)
 			.set({
 				...(data.name !== undefined && { name: data.name }),
 				...(data.description !== undefined && {
@@ -133,7 +137,7 @@ export abstract class ProductService {
 				...(data.price !== undefined && { price: String(data.price) }),
 				...(data.stock !== undefined && { stock: data.stock })
 			})
-			.where(eq(product.id, id))
+			.where(eq(productExample.id, id))
 			.returning()
 
 		return row
@@ -142,13 +146,13 @@ export abstract class ProductService {
 	static async delete(
 		id: string,
 		userId: string
-	): Promise<ProductModel.ProductResponse> {
+	): Promise<ProductExampleModel.ProductExampleResponse> {
 		// Check product ownership
 		await this.checkProductOwnership(id, userId)
 
 		const [row] = await db
-			.delete(product)
-			.where(eq(product.id, id))
+			.delete(productExample)
+			.where(eq(productExample.id, id))
 			.returning()
 
 		return row
