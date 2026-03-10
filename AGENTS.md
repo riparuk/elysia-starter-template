@@ -63,6 +63,7 @@ tests/
 - **Don't use 'any' type:** Use proper types instead of 'any' as much as possible
 - **Always make tests for new features:** For every new feature or changes, create a new test or update existing test file in the `tests/modules/` directory.
 - **Don't edit product-example module:** The product-example module is a template and should not be edited. Use it as a reference to create new modules.
+- **After changes, always run lint:fix and format:** Before committing, always run `bun run lint:fix` and `bun run format` to ensure your code is clean and consistent. If there are any lint errors, fix them.
 
 ---
 
