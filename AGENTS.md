@@ -41,7 +41,7 @@ tests/
 | `bun run start` | Run the compiled production binary |
 | `bun run lint:fix` | Fix lint errors via ESLint |
 | `bun run format` | Format all source files via Prettier |
-| `bun test` | Run all tests |
+| `bun test --env-file=.env.local` | Run all tests |
 | `bun test <pattern>` | Run tests matching a name or path pattern (e.g., `bun test auth`) |
 | `bunx drizzle-kit generate --name <name>` | Generate a migration from schema changes |
 | `bunx drizzle-kit check` | Validate pending migrations |
